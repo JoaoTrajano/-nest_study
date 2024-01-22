@@ -8,6 +8,6 @@ import { LoggerMiddleware } from './middlewares/common/logger.middleware';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('cats');
+    consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 }
