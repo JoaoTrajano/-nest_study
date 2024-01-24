@@ -23,7 +23,8 @@
     "prisma:db:push": "npx prisma db push --schema=./src/config/database/prisma/schema.prisma",
     "prisma:db:pull": "npx prisma db pull --schema=./src/config/database/prisma/schema.prisma",
     "prisma:db:reset": "npx prisma db reset --schema=./src/config/database/prisma/schema.prisma",
-    "prisma:db:deploy": "npx prisma db push --schema=./dist/config/database/prisma/schema.prisma"
+    "prisma:db:deploy": "npx prisma db push --schema=./dist/config/database/prisma/schema.prisma",
+    "prisma:db:migrate": "npx prisma migrate dev --name --schema=./dist/config/database/prisma/schema.prisma"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
