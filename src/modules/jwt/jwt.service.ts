@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService as JwtServiceNest } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { Users } from '@prisma/client';
 
 @Injectable()
-export class JwtService {
-  constructor(private readonly jwtServiceNest: JwtServiceNest) {}
+export class JwtServiceAuthenticate {
+  constructor(private readonly jwtService: JwtService) {}
 
   async sign(user: Users) {
-    return await this.jwtServiceNest.sign(String(user.id));
+    return await this.jwtService.sign(String(user.id));
   }
 
   verify() {
