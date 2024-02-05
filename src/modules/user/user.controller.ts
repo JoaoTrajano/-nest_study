@@ -1,13 +1,48 @@
-import { Controller } from '@nestjs/common';
-import { UserService } from './user.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+  UnprocessableEntityException,
+  UseGuards,
+} from '@nestjs/common';
 
+import { UserService } from './user.service';
+import { Users } from '@prisma/client';
+import { AuthGuard } from 'src/guards/auth.guard';
+
+@UseGuards(AuthGuard)
 @Controller('user')
 export class UserController {
-  // constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
-  async create() {}
+  @Post()
+  async create(@Body() user: Users) {
+    const userCreated = await this.userService.create(user);
+    if (!userCreated) throw new UnprocessableEntityException();
+  }
 
-  async fetch() {}
+  @Get()
+  async fetch() {
+    return this.userService.fetch();
+  }
 
-  async show() {}
+  @Get('/:id')
+  async show(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.show(id);
+  }
+
+  @Delete('/:id')
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.delete(id);
+  }
+
+  @Put('/:id')
+  async update(@Param('id', ParseIntPipe) id: number, @Body() data: Users) {
+    return this.userService.update(id, data);
+  }
 }
