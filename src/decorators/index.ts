@@ -1,1 +1,1 @@
-export * from './level.decorator';
+export * from './role.decorator';

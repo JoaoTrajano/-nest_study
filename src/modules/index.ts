@@ -1,2 +1,2 @@
-export * from './auth';
-export * from './user';
+export { AuthService, AuthController, AuthModule } from './auth';
+export { UserController, UserService, UserModule } from './user';
