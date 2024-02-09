@@ -1,12 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'src/config/database';
+import { UserService } from '../user';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly prismaService: PrismaService,
+    // private readonly userService: UserService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -14,31 +14,26 @@ export class AuthService {
     cpf: string,
     password: string,
   ): Promise<{ token: string } | UnauthorizedException> {
-    const user = await this.prismaService.users.findFirst({
-      where: {
-        cpf,
-        password,
-      },
-    });
+    // const user = await this.userService.findByPasswordAndCpf(password, cpf);
 
-    if (!user) throw new UnauthorizedException('CPF ou SENHA inválidos!');
+    // if (!user) throw new UnauthorizedException('CPF ou SENHA inválidos!');
 
-    const token = await this.jwtService.signAsync(
-      {
-        id: user.id,
-      },
-      {
-        issuer: 'Auth',
-      },
-    );
+    // const token = await this.jwtService.signAsync(
+    //   {
+    //     id: user.id,
+    //   },
+    //   {
+    //     issuer: 'Auth',
+    //   },
+    // );
 
-    return { token };
+    return { token: '' };
   }
 
-  verify(token: string): boolean {
+  verify(token: string): number | boolean {
     try {
-      this.jwtService.verify(token);
-      return true;
+      const id: number = this.jwtService.verify(token).id;
+      return id;
     } catch (error) {
       return false;
     }

@@ -54,4 +54,15 @@ export class UserService {
 
     return userUpdated;
   }
+
+  async findByPasswordAndCpf(
+    password: string,
+    cpf: string,
+  ): Promise<Users | null> {
+    const user = this.prismaService.users.findFirst({
+      where: { password, cpf },
+    });
+
+    return user ? user : null;
+  }
 }

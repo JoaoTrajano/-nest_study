@@ -13,7 +13,8 @@ import {
 
 import { UserService } from './user.service';
 import { Users } from '@prisma/client';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from 'src/guards';
+import { Levels } from 'src/decorators';
 
 @UseGuards(AuthGuard)
 @Controller('user')
@@ -21,6 +22,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
+  @Levels(['admin'])
   async create(@Body() user: Users) {
     const userCreated = await this.userService.create(user);
     if (!userCreated) throw new UnprocessableEntityException();

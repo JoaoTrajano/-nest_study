@@ -1,4 +1,4 @@
-import { AuthModule, UserModule } from './modules';
+import { AuthModule, UserModule } from '@modules/index';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 
 import { LoggerMiddleware } from './middlewares/common/logger.middleware';
