@@ -29,7 +29,6 @@ export class UserController {
   }
 
   @Get()
-  @Role(['admin'])
   async fetch() {
     return this.userService.fetch();
   }
@@ -45,6 +44,7 @@ export class UserController {
   }
 
   @Delete('/:id')
+  @Role(['admin'])
   async delete(@Param('id', ParseIntPipe) id: number) {
     return this.userService.delete(id);
   }
