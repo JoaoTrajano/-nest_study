@@ -14,7 +14,7 @@ import {
 import { UserService } from './user.service';
 import { Users } from '@prisma/client';
 import { AuthGuard, RoleGuard } from 'src/guards';
-import { Role } from 'src/decorators';
+import { Role, User } from 'src/decorators';
 
 @UseGuards(AuthGuard, RoleGuard)
 @Controller('user')
@@ -37,6 +37,11 @@ export class UserController {
   @Get('/:id')
   async show(@Param('id', ParseIntPipe) id: number) {
     return this.userService.show(id);
+  }
+
+  @Post('/account')
+  async account(@User() user) {
+    return user;
   }
 
   @Delete('/:id')
