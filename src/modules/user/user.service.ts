@@ -1,12 +1,22 @@
+import { Bcrypt } from 'src/entities/Bcrypt';
+import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/config/database';
 import { Users } from '@prisma/client';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly bcrypt: Bcrypt,
+  ) {}
 
   async create(user: Users): Promise<Users | boolean> {
+    const encryptedPassword = await this.bcrypt.create(user.password);
+    if (!encryptedPassword) throw new ExceptionsHandler();
+
+    user.password = String(encryptedPassword);
+
     const userCreated = await this.prismaService.users.create({ data: user });
     if (!userCreated) return false;
     return userCreated;

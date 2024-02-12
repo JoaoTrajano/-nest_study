@@ -1,6 +1,6 @@
 import { compare, genSalt, hash } from 'bcrypt';
 
-export class Bycrypt {
+export class Bcrypt {
   private salt: string;
 
   constructor() {
@@ -23,7 +23,7 @@ export class Bycrypt {
   async verify(password: string, encryptedPassword: string): Promise<boolean> {
     try {
       if (!password || !encryptedPassword) return false;
-      return compare(password, encryptedPassword);
+      return await compare(password, encryptedPassword);
     } catch (error) {
       return false;
     }

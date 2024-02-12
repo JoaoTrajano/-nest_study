@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
+import { Bcrypt } from 'src/entities/Bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/config/database';
 
@@ -8,20 +9,26 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly prismaService: PrismaService,
+    private readonly bcrypt: Bcrypt,
   ) {}
 
   async login(
     cpf: string,
     password: string,
   ): Promise<{ token: string } | UnauthorizedException> {
+    if (!cpf) throw new UnauthorizedException('CPF obrigatório!');
+    if (!password) throw new UnauthorizedException('SENHA obrigatório!');
+
     const user = await this.prismaService.users.findFirst({
       where: {
         cpf,
-        password,
       },
     });
 
-    if (!user) throw new UnauthorizedException('CPF ou SENHA inválidos!');
+    if (!user) throw new UnauthorizedException('CPF/SENHA inválidos!');
+
+    if (!(await this.bcrypt.verify(password, user.password)))
+      throw new UnauthorizedException('CPF/SENHA inválidos!');
 
     const token = await this.jwtService.signAsync(
       {
