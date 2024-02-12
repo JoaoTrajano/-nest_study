@@ -8,18 +8,25 @@ import {
   Post,
   Put,
   UnprocessableEntityException,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 
 import { UserService } from './user.service';
 import { Users } from '@prisma/client';
 import { AuthGuard, RoleGuard } from 'src/guards';
 import { Role, User } from 'src/decorators';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileService } from '@modules/file/file.service';
 
 @UseGuards(AuthGuard, RoleGuard)
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly file: FileService,
+  ) {}
 
   @Post()
   @Role(['admin'])
@@ -41,6 +48,12 @@ export class UserController {
   @Post('/account')
   async account(@User() user) {
     return user;
+  }
+
+  @UseInterceptors(FileInterceptor('file'))
+  @Post('/photo')
+  async uploadPhoto(@User() user, @UploadedFile() photo) {
+    console.log({ photo });
   }
 
   @Delete('/:id')

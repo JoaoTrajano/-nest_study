@@ -1,19 +1,26 @@
-import { IsEmail, IsNotEmpty, MaxLength } from 'class-validator';
+import { IsDate, IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class UserDTO {
-  @IsNotEmpty()
-  @MaxLength(50)
+  @IsString()
   name: string;
 
   @IsEmail()
   email: string;
 
+  @IsEmail()
+  @IsNotEmpty()
   cpf: string;
 
   @IsNotEmpty()
   password: string;
 
+  @IsNotEmpty()
+  @IsString()
+  level: string;
+
+  @IsDate()
   createdAt: Date;
 
+  @IsDate()
   updatedAt: Date;
 }
