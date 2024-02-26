@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseFilePipe,
   ParseIntPipe,
   Post,
   Put,
@@ -11,6 +12,8 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  FileTypeValidator,
+  MaxFileSizeValidator,
 } from '@nestjs/common';
 
 import { UserService } from './user.service';
@@ -52,7 +55,17 @@ export class UserController {
 
   @UseInterceptors(FileInterceptor('file'))
   @Post('/photo')
-  async uploadPhoto(@User() user, @UploadedFile() photo) {
+  async uploadPhoto(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: 'image/png' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 50 }),
+        ],
+      }),
+    )
+    photo,
+  ) {
     console.log({ photo });
   }
 
