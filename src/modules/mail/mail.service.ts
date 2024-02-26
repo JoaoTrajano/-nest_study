@@ -1,20 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { MailerDTO } from './dto';
+import { MailerOptions } from './dto';
 import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class MailService {
   constructor(private readonly mailer: MailerService) {}
 
-  async send(config: MailerDTO) {
-    const { to, from, subject, template, context } = config;
-
+  async send(options: MailerOptions) {
     return await this.mailer.sendMail({
-      to,
-      from,
-      subject,
-      template,
-      context,
+      ...options,
     });
   }
 }

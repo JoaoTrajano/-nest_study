@@ -1,13 +1,13 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDTO } from './dto';
-import { MailerService } from '@nestjs-modules/mailer';
+import { MailService } from '@modules/mail/mail.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly mailer: MailerService,
+    private readonly mailer: MailService,
   ) {}
 
   @Post('')
@@ -19,13 +19,12 @@ export class AuthController {
 
   @Post('/forget-password')
   async forgetPassword() {
-    const result = await this.mailer.sendMail({
-      subject: 'Teste de envio',
+    const result = await this.mailer.send({
       to: 'joao.trajanosouza@gmail.com',
+      from: 'teste@gmail.com',
+      subject: 'teste de envio',
       template: 'forget',
-      context: {
-        name: 'João',
-      },
+      context: { name: 'João' },
     });
     return result;
   }

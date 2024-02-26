@@ -4,7 +4,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { Bcrypt } from 'src/entities/Bcrypt';
 import { JwtModule } from '@nestjs/jwt';
-import { MailModule } from '..';
+import { MailModule } from '@modules/mail/mail.module';
 import { PrismaService } from 'src/config/database';
 import { UserModule } from '@modules/user/user.module';
 

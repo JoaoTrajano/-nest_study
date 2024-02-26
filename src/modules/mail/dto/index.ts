@@ -1,5 +1,13 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
+export type MailerOptions = {
+  to: string;
+  from: string;
+  subject: string;
+  template: string;
+  context?: any;
+};
+
 export class MailerDTO {
   @IsEmail()
   to: string;

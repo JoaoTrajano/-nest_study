@@ -18,7 +18,7 @@ import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
         from: `'${process.env.FROM_USER}" <${process.env.FROM_EMAIL}>'`,
       },
       template: {
-        dir: __dirname + '/templates',
+        dir: __dirname + '/../../templates',
         adapter: new PugAdapter(),
         options: {
           strict: true,
@@ -26,6 +26,7 @@ import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
       },
     }),
   ],
+  providers: [MailService],
   exports: [MailService],
 })
 export class MailModule {}
