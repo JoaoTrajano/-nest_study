@@ -16,16 +16,4 @@ export class AuthController {
     const result = this.authService.login(cpf, password);
     return result;
   }
-
-  @Post('/forget-password')
-  async forgetPassword() {
-    const result = await this.mailer.send({
-      to: 'joao.trajanosouza@gmail.com',
-      from: 'teste@gmail.com',
-      subject: 'teste de envio',
-      template: 'forget',
-      context: { name: 'João' },
-    });
-    return result;
-  }
 }

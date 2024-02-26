@@ -1,4 +1,9 @@
-import { AuthModule, MailModule, UserModule } from '@modules/index';
+import {
+  AuthModule,
+  MailModule,
+  RecoverPasswordModule,
+  UserModule,
+} from '@modules/index';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 
 import { ConfigModule } from '@nestjs/config';
@@ -17,6 +22,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
     AuthModule,
     UserModule,
     MailModule,
+    RecoverPasswordModule,
   ],
 })
 export class AppModule {
