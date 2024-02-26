@@ -4,6 +4,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { Bcrypt } from 'src/entities/Bcrypt';
 import { JwtModule } from '@nestjs/jwt';
+import { MailModule } from '..';
 import { PrismaService } from 'src/config/database';
 import { UserModule } from '@modules/user/user.module';
 
@@ -15,6 +16,7 @@ import { UserModule } from '@modules/user/user.module';
       signOptions: { expiresIn: '1h' },
     }),
     forwardRef(() => UserModule),
+    MailModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, Bcrypt, PrismaService],

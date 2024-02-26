@@ -1,9 +1,9 @@
+import { MailService } from './mail.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 
 @Module({
-  exports: [],
   imports: [
     MailerModule.forRoot({
       transport: {
@@ -26,5 +26,6 @@ import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
       },
     }),
   ],
+  exports: [MailService],
 })
 export class MailModule {}
