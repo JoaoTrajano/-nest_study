@@ -69,13 +69,24 @@ export class RecoverPasswordService {
         },
       );
 
-      if (!obtainedToken)
+      if (!obtainedToken || obtainedToken.checked) {
         throw new UnauthorizedException('Link de recuperação não é válido');
+      }
 
       const { user } = obtainedToken;
       user.password = String(await this.bcrypt.create(newPassword));
 
       await this.userService.update(user.id, user);
+      obtainedToken.checked = true;
+
+      await this.prismaService.recoveryPassword.update({
+        where: {
+          id: obtainedToken.id,
+        },
+        data: {
+          checked: true,
+        },
+      });
     } catch (error) {
       throw new UnauthorizedException('Link de recuperação não é válido');
     }

@@ -8,29 +8,28 @@ datasource db {
 }
 
 model Users {
-  id           Int             @id @default(autoincrement())
-  name         String
-  email        String
-  cpf          String
-  password     String
-  level        String          @default("admin")
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @default(now())
-  recoveryPassword     RecoveryPassword[]  
+  id               Int                @id @default(autoincrement())
+  name             String
+  email            String
+  cpf              String
+  password         String
+  level            String             @default("admin")
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  recoveryPassword RecoveryPassword[]
 
   @@map("users")
 }
 
 model RecoveryPassword {
-  id           Int       @id @default(autoincrement())
-  idUser       Int
-  token        String
-  validUntil   DateTime
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @default(now())
-  user         Users     @relation(fields: [idUser], references: [id])
+  id         Int      @id @default(autoincrement())
+  idUser     Int
+  token      String
+  validUntil DateTime
+  checked    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+  user       Users    @relation(fields: [idUser], references: [id])
 
   @@map("recoveryPassword")
 }
-
-
