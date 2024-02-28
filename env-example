@@ -1,7 +1,28 @@
-DATABASE_URL=""
+# DATABASE_URL=""
 
+NODE_ENV="development"
+
+#JWT
 JWT_KEY=""
+
+#DATABASE
+DB_HOST= ''
+DB_PORT= 
+DB_USER= ''
+DB_PASSWORD=''
+DB_NAME=''
 
 # Throttler
 TTL=
 LIMIT=
+
+#MAIL
+HOST=""
+PORT=
+USER=""
+PASSWORD=""
+FROM_USER=""
+FROM_EMAIL=""
+TIME_EXPIRES=
+
+

@@ -22,8 +22,9 @@ import { AuthGuard, RoleGuard } from 'src/guards';
 import { Role, User } from 'src/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileService } from '@modules/file/file.service';
+import { UserEntity } from 'src/config/database';
 
-@UseGuards(AuthGuard, RoleGuard)
+// @UseGuards(AuthGuard, RoleGuard)
 @Controller('user')
 export class UserController {
   constructor(
@@ -32,51 +33,50 @@ export class UserController {
   ) {}
 
   @Post()
-  @Role(['admin'])
-  async create(@Body() user: Users) {
-    const userCreated = await this.userService.create(user);
-    if (!userCreated) throw new UnprocessableEntityException();
+  // @Role(['admin'])
+  async create(@Body() user: UserEntity) {
+    return await this.userService.create(user);
   }
 
-  @Get()
-  async fetch() {
-    return this.userService.fetch();
-  }
+  // @Get()
+  // async fetch() {
+  //   return this.userService.fetch();
+  // }
 
-  @Get('/:id')
-  async show(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.show(id);
-  }
+  // @Get('/:id')
+  // async show(@Param('id', ParseIntPipe) id: number) {
+  //   return this.userService.show(id);
+  // }
 
-  @Post('/account')
-  async account(@User() user) {
-    return user;
-  }
+  // @Post('/account')
+  // async account(@User() user) {
+  //   return user;
+  // }
 
-  @UseInterceptors(FileInterceptor('file'))
-  @Post('/photo')
-  async uploadPhoto(
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new FileTypeValidator({ fileType: 'image/png' }),
-          new MaxFileSizeValidator({ maxSize: 1024 * 50 }),
-        ],
-      }),
-    )
-    photo,
-  ) {
-    console.log({ photo });
-  }
+  // @UseInterceptors(FileInterceptor('file'))
+  // @Post('/photo')
+  // async uploadPhoto(
+  //   @UploadedFile(
+  //     new ParseFilePipe({
+  //       validators: [
+  //         new FileTypeValidator({ fileType: 'image/png' }),
+  //         new MaxFileSizeValidator({ maxSize: 1024 * 50 }),
+  //       ],
+  //     }),
+  //   )
+  //   photo,
+  // ) {
+  //   console.log({ photo });
+  // }
 
-  @Delete('/:id')
-  @Role(['admin'])
-  async delete(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.delete(id);
-  }
+  // @Delete('/:id')
+  // @Role(['admin'])
+  // async delete(@Param('id', ParseIntPipe) id: number) {
+  //   return this.userService.delete(id);
+  // }
 
-  @Put('/:id')
-  async update(@Param('id', ParseIntPipe) id: number, @Body() data: Users) {
-    return this.userService.update(id, data);
-  }
+  // @Put('/:id')
+  // async update(@Param('id', ParseIntPipe) id: number, @Body() data: Users) {
+  //   return this.userService.update(id, data);
+  // }
 }

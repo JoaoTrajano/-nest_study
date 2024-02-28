@@ -1,86 +1,86 @@
+import { UserEntity, UserRepository } from 'src/config/database';
+
 import { Bcrypt } from 'src/entities/Bcrypt';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/config/database';
-import { Users } from '@prisma/client';
 
 @Injectable()
 export class UserService {
   constructor(
-    private readonly prismaService: PrismaService,
     private readonly bcrypt: Bcrypt,
+    private readonly userRepository: UserRepository,
   ) {}
 
-  async create(user: Users): Promise<Users | boolean> {
+  async create(user: UserEntity): Promise<UserEntity | boolean> {
     const encryptedPassword = await this.bcrypt.create(user.password);
     if (!encryptedPassword) throw new ExceptionsHandler();
 
     user.password = String(encryptedPassword);
 
-    const userCreated = await this.prismaService.users.create({ data: user });
+    const userCreated = await this.userRepository.create(user);
     if (!userCreated) return false;
     return userCreated;
   }
 
-  async fetch(): Promise<Users[]> {
-    const users = await this.prismaService.users.findMany({});
-    return users;
-  }
+  // async fetch(): Promise<Users[]> {
+  //   const users = await this.prismaService.users.findMany({});
+  //   return users;
+  // }
 
-  async show(id: number): Promise<Users | null> {
-    const user = await this.prismaService.users.findUnique({
-      where: {
-        id,
-      },
-    });
-    return user ? user : null;
-  }
+  // async show(id: number): Promise<Users | null> {
+  //   const user = await this.prismaService.users.findUnique({
+  //     where: {
+  //       id,
+  //     },
+  //   });
+  //   return user ? user : null;
+  // }
 
-  async delete(id: number): Promise<Users | boolean> {
-    const user = await this.show(id);
+  // async delete(id: number): Promise<Users | boolean> {
+  //   const user = await this.show(id);
 
-    if (!user) return false;
+  //   if (!user) return false;
 
-    await this.prismaService.users.delete({
-      where: {
-        id: user.id,
-      },
-    });
+  //   await this.prismaService.users.delete({
+  //     where: {
+  //       id: user.id,
+  //     },
+  //   });
 
-    return user;
-  }
+  //   return user;
+  // }
 
-  async update(id: number, data: Users): Promise<Users | boolean> {
-    const user = await this.show(id);
+  // async update(id: number, data: Users): Promise<Users | boolean> {
+  //   const user = await this.show(id);
 
-    if (!user) return false;
+  //   if (!user) return false;
 
-    const userUpdated = await this.prismaService.users.update({
-      where: {
-        id: user.id,
-      },
-      data,
-    });
+  //   const userUpdated = await this.prismaService.users.update({
+  //     where: {
+  //       id: user.id,
+  //     },
+  //     data,
+  //   });
 
-    return userUpdated;
-  }
+  //   return userUpdated;
+  // }
 
-  async findByPasswordAndCpf(
-    password: string,
-    cpf: string,
-  ): Promise<Users | null> {
-    const user = this.prismaService.users.findFirst({
-      where: { password, cpf },
-    });
+  // async findByPasswordAndCpf(
+  //   password: string,
+  //   cpf: string,
+  // ): Promise<Users | null> {
+  //   const user = this.prismaService.users.findFirst({
+  //     where: { password, cpf },
+  //   });
 
-    return user ? user : null;
-  }
+  //   return user ? user : null;
+  // }
 
-  async findByEmail(email: string): Promise<Users | null> {
-    const user = this.prismaService.users.findFirst({
-      where: { email },
-    });
+  // async findByEmail(email: string): Promise<Users | null> {
+  //   const user = this.prismaService.users.findFirst({
+  //     where: { email },
+  //   });
 
-    return user ? user : null;
-  }
+  //   return user ? user : null;
+  // }
 }
