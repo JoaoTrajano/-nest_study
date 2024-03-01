@@ -7,3 +7,4 @@ export {
   RecoverPasswordModule,
   RecoverPasswordService,
 } from './recover-password';
+export { TasksController, TasksModule, TasksService } from './tasks';

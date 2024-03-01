@@ -1,12 +1,12 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 
-import { Bcrypt } from 'src/entities/Bcrypt';
+import { Bcrypt } from 'src/helpers/Bcrypt';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 import { MailService } from '@modules/mail/mail.service';
-import { PrismaService } from 'src/config/database';
 import { UserService } from '@modules/user/user.service';
-import { Users } from '@prisma/client';
 import { addMinutes } from 'date-fns';
+import { UserEntity } from '@modules/user/entities/user.entity';
+import { UserRepository } from '@database/typeorm';
 
 Injectable();
 export class RecoverPasswordService {
@@ -19,8 +19,8 @@ export class RecoverPasswordService {
   @Inject(Bcrypt)
   private readonly bcrypt: Bcrypt;
 
-  @Inject(PrismaService)
-  private readonly prismaService: PrismaService;
+  @Inject(UserRepository)
+  private readonly userRepository: UserRepository;
 
   private expiriesIn: number;
 
@@ -29,64 +29,53 @@ export class RecoverPasswordService {
   }
 
   async sendEmailToRecoveryPassword(email: string) {
-    // const user = await this.userService.findByEmail(email);
-    // if (!user) throw new ExceptionsHandler();
-    // const accessLinkRecoverPassword =
-    //   await this.generateAccessLinkRecoverPassword(user);
-    // try {
-    //   return await this.mailer.send({
-    //     to: user.email,
-    //     from: process.env.FROM_EMAIL,
-    //     subject: 'Recuperação de Senha',
-    //     template: 'forget',
-    //     context: {
-    //       name: user.name,
-    //       link: accessLinkRecoverPassword,
-    //     },
-    //   });
-    // } catch (error) {
-    //   throw new ExceptionsHandler();
-    // }
+    const user = await this.userService.findByEmail(email);
+    if (!user) throw new ExceptionsHandler();
+    const accessLinkRecoverPassword =
+      await this.generateAccessLinkRecoverPassword(user);
+    try {
+      return await this.mailer.send({
+        to: user.email,
+        from: process.env.FROM_EMAIL,
+        subject: 'Recuperação de Senha',
+        template: 'forget',
+        context: {
+          name: user.name,
+          link: accessLinkRecoverPassword,
+        },
+      });
+    } catch (error) {
+      throw new ExceptionsHandler();
+    }
   }
 
   async updatePassword(token: string, newPassword: string) {
-    // const currentDateTime = new Date();
-    // const fiveMinutesFromNow = addMinutes(currentDateTime, this.expiriesIn);
-    // try {
-    //   const obtainedToken = await this.prismaService.recoveryPassword.findFirst(
-    //     {
-    //       where: {
-    //         token,
-    //         validUntil: {
-    //           gte: currentDateTime,
-    //           lt: fiveMinutesFromNow,
-    //         },
-    //       },
-    //       include: { user: true },
-    //     },
-    //   );
-    //   if (!obtainedToken || obtainedToken.checked) {
-    //     throw new UnauthorizedException('Link de recuperação não é válido');
-    //   }
-    //   const { user } = obtainedToken;
-    //   user.password = String(await this.bcrypt.create(newPassword));
-    //   await this.userService.update(user.id, user);
-    //   obtainedToken.checked = true;
-    //   await this.prismaService.recoveryPassword.update({
-    //     where: {
-    //       id: obtainedToken.id,
-    //     },
-    //     data: {
-    //       checked: true,
-    //     },
-    //   });
-    // } catch (error) {
-    //   throw new UnauthorizedException('Link de recuperação não é válido');
-    // }
+    const currentDateTime = new Date();
+    const fiveMinutesFromNow = addMinutes(currentDateTime, this.expiriesIn);
+    try {
+      // const obtainedToken = await this.userRepository.find({
+      //   token,
+      //   validUntil: {
+      //     gte: currentDateTime,
+      //     lt: fiveMinutesFromNow,
+      //   },
+      //   include: { user: true },
+      // });
+      // if (!obtainedToken || obtainedToken.checked) {
+      //   throw new UnauthorizedException('Link de recuperação não é válido');
+      // }
+      // const { user } = obtainedToken;
+      // user.password = String(await this.bcrypt.create(newPassword));
+      // await this.userService.update(user.id, user);
+      // obtainedToken.checked = true;
+      // await this.userRepository.update(obtainedToken.id, { checked: true });
+    } catch (error) {
+      throw new UnauthorizedException('Link de recuperação não é válido');
+    }
   }
 
   private async createTokenForRecoveryPassword(
-    user: Users,
+    user: UserEntity,
   ): Promise<string | UnauthorizedException> {
     const token = String(await this.bcrypt.create(user.cpf));
 
@@ -94,13 +83,13 @@ export class RecoverPasswordService {
       const validUntil = new Date();
       validUntil.setMinutes(validUntil.getMinutes() + this.expiriesIn);
 
-      await this.prismaService.recoveryPassword.create({
-        data: {
-          token,
-          idUser: user.id,
-          validUntil,
-        },
-      });
+      // await this.userRepository.recoveryPassword.create({
+      //   data: {
+      //     token,
+      //     idUser: user.id,
+      //     validUntil,
+      //   },
+      // });
       return token;
     } catch (error) {
       throw new UnauthorizedException('Link de recuperação não é válido');
@@ -108,7 +97,7 @@ export class RecoverPasswordService {
   }
 
   private async generateAccessLinkRecoverPassword(
-    user: Users,
+    user: UserEntity,
   ): Promise<string> {
     const token = await this.createTokenForRecoveryPassword(user);
     return `http://localhost:3000/recover-password?key=${token}`;

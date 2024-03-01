@@ -1,8 +1,10 @@
-import { UserEntity, UserRepository } from 'src/config/database';
+import { UserRepository } from 'src/database';
 
-import { Bcrypt } from 'src/entities/Bcrypt';
+import { Bcrypt } from 'src/helpers/Bcrypt';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 import { Injectable } from '@nestjs/common';
+import { UpdateResult } from 'typeorm';
+import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -17,70 +19,54 @@ export class UserService {
 
     user.password = String(encryptedPassword);
 
-    const userCreated = await this.userRepository.create(user);
+    const userCreated = this.userRepository.create(user);
     if (!userCreated) return false;
     return userCreated;
   }
 
-  // async fetch(): Promise<Users[]> {
-  //   const users = await this.prismaService.users.findMany({});
-  //   return users;
-  // }
+  async fetch(): Promise<UserEntity[]> {
+    const users = await this.userRepository.fetchAll();
+    return users;
+  }
 
-  // async show(id: number): Promise<Users | null> {
-  //   const user = await this.prismaService.users.findUnique({
-  //     where: {
-  //       id,
-  //     },
-  //   });
-  //   return user ? user : null;
-  // }
+  async show(id: number): Promise<UserEntity | null> {
+    const user = await this.userRepository.show(id);
+    return user ? user : null;
+  }
 
-  // async delete(id: number): Promise<Users | boolean> {
-  //   const user = await this.show(id);
+  async delete(id: number): Promise<UserEntity | boolean> {
+    const user = await this.show(id);
+    if (!user) return false;
 
-  //   if (!user) return false;
+    await this.userRepository.delete(user);
+    return user;
+  }
 
-  //   await this.prismaService.users.delete({
-  //     where: {
-  //       id: user.id,
-  //     },
-  //   });
+  async update(id: number, data: UserEntity): Promise<UpdateResult | boolean> {
+    const user = await this.show(id);
+    if (!user) return false;
 
-  //   return user;
-  // }
+    const userUpdated = await this.userRepository.update(user.id, data);
+    return userUpdated;
+  }
 
-  // async update(id: number, data: Users): Promise<Users | boolean> {
-  //   const user = await this.show(id);
+  async findByPasswordAndCpf(
+    password: string,
+    cpf: string,
+  ): Promise<UserEntity | null> {
+    const user = this.userRepository.find({
+      password,
+      cpf,
+    });
 
-  //   if (!user) return false;
+    return user ? user : null;
+  }
 
-  //   const userUpdated = await this.prismaService.users.update({
-  //     where: {
-  //       id: user.id,
-  //     },
-  //     data,
-  //   });
+  async findByEmail(email: string): Promise<UserEntity | null> {
+    const user = this.userRepository.find({
+      email,
+    });
 
-  //   return userUpdated;
-  // }
-
-  // async findByPasswordAndCpf(
-  //   password: string,
-  //   cpf: string,
-  // ): Promise<Users | null> {
-  //   const user = this.prismaService.users.findFirst({
-  //     where: { password, cpf },
-  //   });
-
-  //   return user ? user : null;
-  // }
-
-  // async findByEmail(email: string): Promise<Users | null> {
-  //   const user = this.prismaService.users.findFirst({
-  //     where: { email },
-  //   });
-
-  //   return user ? user : null;
-  // }
+    return user ? user : null;
+  }
 }

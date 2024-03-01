@@ -1,12 +1,13 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { UserEntity, UserRepository } from 'src/config/database';
+import { UserRepository } from 'src/database';
 
 import { AuthModule } from '@modules/auth/auth.module';
-import { Bcrypt } from 'src/entities/Bcrypt';
+import { Bcrypt } from 'src/helpers/Bcrypt';
 import { FileModule } from '@modules/file/file.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
+import { UserEntity } from './entities/user.entity';
 
 @Module({
   imports: [

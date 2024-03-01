@@ -2,11 +2,13 @@ import { Module, forwardRef } from '@nestjs/common';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { Bcrypt } from 'src/entities/Bcrypt';
+import { Bcrypt } from 'src/helpers/Bcrypt';
 import { JwtModule } from '@nestjs/jwt';
 import { MailModule } from '@modules/mail/mail.module';
-import { PrismaService } from 'src/config/database';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '@modules/user/user.module';
+import { UserEntity } from '@modules/user/entities/user.entity';
+import { UserRepository } from '@database/typeorm';
 
 @Module({
   imports: [
@@ -17,9 +19,10 @@ import { UserModule } from '@modules/user/user.module';
     }),
     forwardRef(() => UserModule),
     MailModule,
+    TypeOrmModule.forFeature([UserEntity]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, Bcrypt, PrismaService],
+  providers: [UserRepository, AuthService, Bcrypt],
   exports: [AuthService],
 })
 export class AuthModule {}

@@ -3,6 +3,7 @@ import {
   MailModule,
   RecoverPasswordModule,
   UserModule,
+  TasksModule,
 } from '@modules/index';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 
@@ -10,7 +11,7 @@ import { ConfigModule } from '@nestjs/config';
 import { LoggerMiddleware } from './middlewares/common/logger.middleware';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from './config/database';
+import { UserEntity } from '@modules/user/entities/user.entity';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { UserEntity } from './config/database';
     UserModule,
     MailModule,
     RecoverPasswordModule,
+    TasksModule,
   ],
 })
 export class AppModule {

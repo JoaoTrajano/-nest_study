@@ -18,7 +18,11 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@modules/*": ["src/modules/*"]
+      "@modules/*": ["src/modules/*"],
+      "@database/*": ["src/database/*"],
+      "@guards/*": ["src/guards/*"],
+      "@helpers/*": ["src/helpers/*"],
+      "@middlewares/*": ["src/middlewares/*"]
     }
   }
 }
