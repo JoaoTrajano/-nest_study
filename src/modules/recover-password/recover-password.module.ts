@@ -6,17 +6,26 @@ import { RecoverPasswordController } from './recover-password.controller';
 import { RecoverPasswordService } from './recover-password.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '@modules/user/user.module';
+import {
+  RecoveryPasswordRepository,
+  UserRepository,
+} from '@database/typeorm/repositories';
+import { RecoveryPasswordEntity } from './entities/recovery-password.entity';
 import { UserEntity } from '@modules/user/entities/user.entity';
-import { UserRepository } from '@database/typeorm';
 
 @Module({
   imports: [
     UserModule,
     AuthModule,
     MailModule,
-    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([RecoveryPasswordEntity, UserEntity]),
   ],
-  providers: [RecoverPasswordService, Bcrypt, UserRepository],
+  providers: [
+    RecoverPasswordService,
+    Bcrypt,
+    UserRepository,
+    RecoveryPasswordRepository,
+  ],
   exports: [RecoverPasswordService],
   controllers: [RecoverPasswordController],
 })

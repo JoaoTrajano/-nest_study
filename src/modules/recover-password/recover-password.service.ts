@@ -3,24 +3,26 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Bcrypt } from 'src/helpers/Bcrypt';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 import { MailService } from '@modules/mail/mail.service';
-import { UserService } from '@modules/user/user.service';
 import { addMinutes } from 'date-fns';
 import { UserEntity } from '@modules/user/entities/user.entity';
-import { UserRepository } from '@database/typeorm';
+import {
+  UserRepository,
+  RecoveryPasswordRepository,
+} from '@database/typeorm/repositories';
 
 Injectable();
 export class RecoverPasswordService {
-  @Inject(UserService)
-  private readonly userService: UserService;
+  @Inject(UserRepository)
+  private readonly userService: UserRepository;
+
+  @Inject(RecoveryPasswordRepository)
+  private readonly recoveryPasswordRepository: RecoveryPasswordRepository;
 
   @Inject(MailService)
   private readonly mailer: MailService;
 
   @Inject(Bcrypt)
   private readonly bcrypt: Bcrypt;
-
-  @Inject(UserRepository)
-  private readonly userRepository: UserRepository;
 
   private expiriesIn: number;
 
@@ -29,7 +31,9 @@ export class RecoverPasswordService {
   }
 
   async sendEmailToRecoveryPassword(email: string) {
-    const user = await this.userService.findByEmail(email);
+    const user = await this.userService.find({
+      email,
+    });
     if (!user) throw new ExceptionsHandler();
     const accessLinkRecoverPassword =
       await this.generateAccessLinkRecoverPassword(user);
@@ -52,18 +56,17 @@ export class RecoverPasswordService {
   async updatePassword(token: string, newPassword: string) {
     const currentDateTime = new Date();
     const fiveMinutesFromNow = addMinutes(currentDateTime, this.expiriesIn);
+
     try {
-      // const obtainedToken = await this.userRepository.find({
-      //   token,
-      //   validUntil: {
-      //     gte: currentDateTime,
-      //     lt: fiveMinutesFromNow,
-      //   },
-      //   include: { user: true },
-      // });
-      // if (!obtainedToken || obtainedToken.checked) {
-      //   throw new UnauthorizedException('Link de recuperação não é válido');
-      // }
+      const obtainedToken = await this.recoveryPasswordRepository.find({
+        where: {
+          token,
+        },
+      });
+
+      if (!obtainedToken || obtainedToken.checked)
+        throw new UnauthorizedException('Link de recuperação não é válido');
+
       // const { user } = obtainedToken;
       // user.password = String(await this.bcrypt.create(newPassword));
       // await this.userService.update(user.id, user);
@@ -83,13 +86,11 @@ export class RecoverPasswordService {
       const validUntil = new Date();
       validUntil.setMinutes(validUntil.getMinutes() + this.expiriesIn);
 
-      // await this.userRepository.recoveryPassword.create({
-      //   data: {
-      //     token,
-      //     idUser: user.id,
-      //     validUntil,
-      //   },
-      // });
+      await this.recoveryPasswordRepository.create({
+        token,
+        idUser: user.id,
+        validUntil,
+      });
       return token;
     } catch (error) {
       throw new UnauthorizedException('Link de recuperação não é válido');

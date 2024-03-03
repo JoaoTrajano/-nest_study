@@ -1,4 +1,4 @@
-import { UserRepository } from '@database/typeorm';
+import { UserRepository } from '@database/typeorm/repositories';
 import { UserEntity } from '@modules/user/entities/user.entity';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
@@ -9,7 +9,6 @@ import { Bcrypt } from 'src/helpers/Bcrypt';
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly bcrypt: Bcrypt,
     private readonly userRepository: UserRepository,
   ) {}
 
@@ -26,7 +25,7 @@ export class AuthService {
 
     if (!user) throw new UnauthorizedException('CPF/SENHA inválidos!');
 
-    if (!(await this.bcrypt.verify(password, user.password)))
+    if (!(await Bcrypt.verify(password, user.password)))
       throw new UnauthorizedException('CPF/SENHA inválidos!');
 
     const token = await this.sign(user, { issuer: 'Auth' });

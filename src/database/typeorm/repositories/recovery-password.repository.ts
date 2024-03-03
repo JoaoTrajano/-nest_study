@@ -11,7 +11,7 @@ export class RecoveryPasswordRepository
     private recoveryPasswordRepository: Repository<RecoveryPasswordEntity>,
   ) {}
 
-  create(data: RecoveryPasswordEntity): RecoveryPasswordEntity {
+  create(data: Partial<RecoveryPasswordEntity>): RecoveryPasswordEntity {
     return this.recoveryPasswordRepository.create(data);
   }
 
@@ -22,12 +22,15 @@ export class RecoveryPasswordRepository
     return await this.recoveryPasswordRepository.update(id, data);
   }
 
-  async find(
-    where: FindOptionsWhere<RecoveryPasswordEntity>,
-  ): Promise<RecoveryPasswordEntity | null> {
+  async find({
+    where,
+  }: {
+    where: FindOptionsWhere<RecoveryPasswordEntity>;
+  }): Promise<RecoveryPasswordEntity | null> {
     const user = await this.recoveryPasswordRepository.findOneBy({
       ...where,
     });
+
     if (!user) return null;
 
     return user;

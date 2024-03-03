@@ -20,7 +20,10 @@ export class Bcrypt {
     }
   }
 
-  async verify(password: string, encryptedPassword: string): Promise<boolean> {
+  static async verify(
+    password: string,
+    encryptedPassword: string,
+  ): Promise<boolean> {
     try {
       if (!password || !encryptedPassword) return false;
       return await compare(password, encryptedPassword);

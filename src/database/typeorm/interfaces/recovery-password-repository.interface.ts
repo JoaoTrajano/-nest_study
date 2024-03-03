@@ -5,7 +5,9 @@ import { RecoveryPasswordEntity } from '@modules/recover-password/entities/recov
 export interface RecoveryPasswordRepositoryInterface {
   create(data: RecoveryPasswordEntity): RecoveryPasswordEntity;
   update(id: number, data: RecoveryPasswordEntity): Promise<UpdateResult>;
-  find(
-    where: FindOptionsWhere<RecoveryPasswordEntity>,
-  ): Promise<RecoveryPasswordEntity | null>;
+  find({
+    where,
+  }: {
+    where: FindOptionsWhere<RecoveryPasswordEntity>;
+  }): Promise<RecoveryPasswordEntity | null>;
 }

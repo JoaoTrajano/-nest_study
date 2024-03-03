@@ -20,14 +20,16 @@ export class RecoveryPasswordEntity {
   token: string;
 
   @Column()
-  validUntil: string;
+  validUntil: Date;
 
-  @Column('')
-  checked: string;
+  @Column({
+    default: false,
+  })
+  checked: boolean;
 
   @CreateDateColumn()
-  createdAt: string;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updatedAt: string;
+  updatedAt: Date;
 }

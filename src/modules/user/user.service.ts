@@ -1,10 +1,9 @@
-import { UserRepository } from 'src/database';
-
 import { Bcrypt } from 'src/helpers/Bcrypt';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 import { Injectable } from '@nestjs/common';
 import { UpdateResult } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
+import { UserRepository } from '@database/typeorm/repositories';
 
 @Injectable()
 export class UserService {
